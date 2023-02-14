@@ -1,8 +1,22 @@
 from flask import Flask, request
-from libs import forceJob
+from libs import forceJob, updateDb
 
 app = Flask(__name__)
 
+@app.post('/updateDb')
+def update_db():
+    try:
+        print("Request {}".format(request.endpoint))
+        content_type = request.headers.get('Content-Type')
+        if content_type == 'application/json':
+            json_body = request.json
+        else:
+            return 'Content-Type not supported!'
+
+        print("body {}".format(json_body))
+        return updateDb.call_function(json_body)
+    except Exception as exc:
+        print("Error {}".format(exc))
 
 @app.post('/forceJob')
 def force_job():
