@@ -1,5 +1,5 @@
 from flask import Flask, request
-from libs import forceJob, updateDb
+from libs import forceJob, updateDb, forceScheduledJob
 
 app = Flask(__name__)
 
@@ -48,6 +48,22 @@ def job_details():
         print("body {}".format(json_body))
 
         return forceJob.call_function(json_body)
+    except Exception as exc:
+        print("Error {}".format(exc))
+
+@app.post('/forceScheduledJob')
+def force_job_scheduled():
+    try:
+        print("Request {}".format(request.endpoint))
+        content_type = request.headers.get('Content-Type')
+        if content_type == 'application/json':
+            json_body = request.json
+        else:
+            return 'Content-Type not supported!'
+
+        print("body {}".format(json_body))
+
+        return forceScheduledJob.call_function(json_body)
     except Exception as exc:
         print("Error {}".format(exc))
 

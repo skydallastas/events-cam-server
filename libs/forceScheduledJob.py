@@ -8,13 +8,15 @@ def call_function(json_body):
     job_id = ""
     service_key = json_body["serviceKey"]
     status = json_body["status"]
+    startDate = json_body["startDate"]
+    stopDate = json_body["stopDate"]
 
     token = call_login()
     if not token:
         return "errore nel login"
     channel_uid = get_channel_uid(token, service_key)
     if channel_uid:
-        job_id = force_job(token, channel_uid, status)
+        job_id = force_job(token, channel_uid, status, startDate, stopDate)
 
     return {"JobId": job_id}
 
@@ -47,10 +49,11 @@ def get_channel_uid(token, service_key):
         return None
 
 
-def force_job(token, channel_uid, status):
+def force_job(token, channel_uid, status, startDate, stopDate):
     try:
-        url = base_url + "ems/forceJob"
-        response = session.post(url, json={"channelUUID": channel_uid, "status": status})
+        url = base_url + "ems/forceJobScheduled"
+        response = session.post(url, json={"channelUUID": channel_uid,
+                                           "status": status, "startDate": startDate, "stopDate": stopDate})
         response_json = response.json()
 
         print(response_json)
