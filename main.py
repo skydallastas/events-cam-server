@@ -20,6 +20,7 @@ def force_job():
     except Exception as exc:
         print("Error {}".format(exc))
 
+
 @app.post('/jobDetails')
 def job_details():
     try:
@@ -35,6 +36,7 @@ def job_details():
         return forceJob.call_function(json_body)
     except Exception as exc:
         print("Error {}".format(exc))
+
 
 if __name__ == '__main__':
     try:

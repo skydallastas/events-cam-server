@@ -1,18 +1,21 @@
 import requests
 
-base_url = "https://0fcd62e4-2f2b-435b-b541-cc66b3bc3227.mock.pstmn.io/"
+base_url = "https://24ed073a-eb48-414a-80b2-cbd67368fdd2.mock.pstmn.io/"
+
 
 def call_function(json_body):
-    jobId = json_body["serviceKey"]
+    job_id = ""
+    service_key = json_body["serviceKey"]
+    status = json_body["status"]
 
-    login = call_login()
-    if not login:
+    token = call_login()
+    if not token:
         return "errore nel login"
-    channelUid = get_channel_uid()
-    if channelUid:
-        jobId = force_job()
+    channel_uid = get_channel_uid(token, service_key)
+    if channel_uid:
+        job_id = force_job(channel_uid, status)
 
-    return {"JobId": jobId}
+    return {"JobId": job_id}
 
 
 def call_login():
@@ -23,33 +26,34 @@ def call_login():
         response_json = response.json()
 
         print(response_json)
-        return response_json["isLogged"]  # TODO
+        return response_json["token"]
     except Exception as exc:
         print("Error {}".format(exc))
-        return
+        return None
 
 
-def get_channel_uid():
+def get_channel_uid(token, service_key):
     try:
-        url = base_url + "ems/getChannelUUID"  # TODO
-        response = requests.get(url)
+        url = base_url + "ems/getChannelUUID"
+        params = {"serviceKey": service_key, "territory": "default"}
+        response = requests.get(url, params=params)
         response_json = response.json()
 
         print(response_json)
-        return response_json["channelUid"]
+        return response_json["channelUUID"]
     except Exception as exc:
         print("Error {}".format(exc))
-        return
+        return None
 
 
-def force_job():
+def force_job(channel_uid, status):
     try:
-        url = base_url + "ems/forceJob" #TODO
-        response = requests.post(url)
+        url = base_url + "ems/forceJob"
+        response = requests.post(url, json={"channelUUID": channel_uid, "status": status})
         response_json = response.json()
 
         print(response_json)
-        return response_json["jobId"]
+        return response_json["jobUUID"]
     except Exception as exc:
         print("Error {}".format(exc))
-        return
+        return None
