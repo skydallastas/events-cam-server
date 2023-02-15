@@ -1,6 +1,7 @@
 import requests
+from libs import jobDetails
 
-base_url = "https://24ed073a-eb48-414a-80b2-cbd67368fdd2.mock.pstmn.io/"
+base_url = "https://01e32dc1-123c-4978-8572-545b2b79ed65.mock.pstmn.io/"
 session = requests.Session()
 
 
@@ -8,15 +9,18 @@ def call_function(json_body):
     job_id = ""
     service_key = json_body["serviceKey"]
     status = json_body["status"]
-
+    eventList = json_body["eventList"]
+    for event in eventList:
+        print('chiamo EMS')
     token = call_login()
     if not token:
         return "errore nel login"
     channel_uid = get_channel_uid(token, service_key)
     if channel_uid:
         job_id = force_job(token, channel_uid, status)
-
-    return {"JobId": job_id}
+    # chiamo API jobDetails
+    return jobDetails.call_function(token)
+    #return {"jobUUID": job_id}
 
 
 def call_login():
