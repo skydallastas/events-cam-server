@@ -11,6 +11,7 @@ def job_details(jobUUID):
     except Exception as exc:
         print("Error {}".format(exc))
 
+
 @app.post('/updateDb')
 def update_db():
     try:
