@@ -4,11 +4,10 @@ from libs import forceJob, updateDb, forceScheduledJob, jobDetails
 app = Flask(__name__)
 
 
-@app.get('/jobDetails')
-def job_details():
+@app.get('/jobs/<jobUUID>')
+def job_details(jobUUID):
     try:
-        token = request.args.get('token')
-        return jobDetails.call_function(token)
+        return jobDetails.call_function(jobUUID)
     except Exception as exc:
         print("Error {}".format(exc))
 
